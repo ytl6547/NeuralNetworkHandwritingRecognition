@@ -1,0 +1,10 @@
+1.What is the neural network trying to do in its layers. How do t-SNE plots help us understand this?
+Neural network is trying to move the data that belong to the same cluster closer. t-SNE helps us understand this by illustrating high-dimension data with 2d data.
+
+
+2.What effect does momentum have on the convergence of training and why? 
+Momentum improves the predict accuracy but bring more oscillation in the training process. 
+
+
+3.What would have been a good time(epoch) to stop the training and why?
+Epoch 8 is a good time to stop for this assignment. After epoch 8, both the accuracy and the loss do not have significant improvement or are not getting better at all. 

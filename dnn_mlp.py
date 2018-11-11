@@ -169,9 +169,10 @@ def main(main_params):
                             # module.params[key] has to be updated with the new value.                     #
                             # parameter update will be of the form: w = w - learning_rate * dl/dw          #
                             ################################################################################
+                            module.params[key] -= _learning_rate * g
 
                             # 
-                            print('Remove this print and add gradient update!')
+                            # print('Remove this print and add gradient update!')
 
 
                         elif _optimizer == "Gradient_Descent_Momentum":
@@ -198,7 +199,7 @@ def main(main_params):
             h1 = model['nonlinear1'].forward(a1)
             a2 = model['L2'].forward(h1)
             loss = model['loss'].forward(a2, y)
-            train_loss +=  len(y) * loss
+            train_loss += len(y) * loss
             train_acc += np.sum(predict_label(a2) == y)
             train_count += len(y)
 
@@ -234,6 +235,7 @@ def main(main_params):
 
         print('Validation loss at epoch ' + str(t + 1) + ' is ' + str(val_loss))
         print('Validation accuracy at epoch ' + str(t + 1) + ' is ' + str(val_acc))
+        # break
 
 
     ### Compute test accuracy ###
@@ -243,7 +245,19 @@ def main(main_params):
     ################################################################################
     test_loss = 0.0
     test_acc = 0.0
-    
+    test_count = 0
+    x, y = testSet.get_example(np.arange(0, N_test))
+    a1 = model['L1'].forward(x)
+    h1 = model['nonlinear1'].forward(a1)
+    a2 = model['L2'].forward(h1)
+    loss = model['loss'].forward(a2, y)
+    test_loss += len(y) * loss
+    test_acc += np.sum(predict_label(a2) == y)
+    test_count += len(y)
+
+    test_loss = test_loss / test_count
+    test_acc = test_acc / test_count
+
 
 
 
@@ -275,7 +289,9 @@ def main(main_params):
     # second_layer_out = output of the neural network second layer on test data
     second_layer_out = np.zeros( (N_test, num_L2), dtype = float)
     
-    # Add your code here 
+    # Add your code here
+    first_layer_out = a1
+    second_layer_out = a2
 
 
     ###########################################################################

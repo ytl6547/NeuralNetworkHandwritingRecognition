@@ -6,7 +6,7 @@ The only classes/functions you need to implement in this template is linear_laye
 """
 
 import numpy as np
-
+from scipy.special import logsumexp
 
 ### Modules ###
 
@@ -66,7 +66,7 @@ class linear_layer:
         ################################################################################
         # TODO: Implement the linear forward pass. Store the result in forward_output  #
         ################################################################################
-        
+        forward_output = np.dot(X, self.params['W'])+self.params['b']
         return forward_output
 
     def backward(self, X, grad):
@@ -99,7 +99,12 @@ class linear_layer:
         # backward_output = ? (N-by-input_D numpy array, the gradient of the mini-batch loss w.r.t. X)                           #
         # only return backward_output, but need to compute self.gradient['W'] and self.gradient['b']                             #
         ##########################################################################################################################
-        
+        # forward_output = self.forward(X)
+        # for i in range(0, X.size()):
+        #     backward_output += np.transpose(self.params['W'])
+        self.gradient['W'] = np.dot(np.transpose(X), grad)
+        self.gradient['b'] = np.sum(grad, axis=0)
+        backward_output = np.dot(grad, np.transpose(self.params['W']))
         return backward_output
 
 
@@ -138,7 +143,8 @@ class relu:
         ################################################################################
         # TODO: Implement the relu forward pass. Store the result in forward_output    #
         ################################################################################
-
+        self.mask = (X > 0).astype(int)
+        forward_output = np.maximum(X, 0)
         return forward_output
 
     def backward(self, X, grad):
@@ -166,7 +172,7 @@ class relu:
         # TODO: Implement the backward pass (i.e., compute the following term)                                                   #
         # backward_output = ? (A numpy array of the shape of X, the gradient of the mini-batch loss w.r.t. X)                    #
         ##########################################################################################################################
-        
+        backward_output = self.mask*grad
         return backward_output
 
 class softmax_cross_entropy:
@@ -207,7 +213,26 @@ class softmax_cross_entropy:
         ################################################################################
         # TODO: Implement the forward pass. Store the result in forward_output         #
         ################################################################################
-       
+        X_prime = np.subtract(X, X.max(1).reshape(X.shape[0], 1))
+        self.prob = X_prime - logsumexp(X_prime, axis=1).reshape(X.shape[0], 1)
+        # print(np.exp(self.prob))
+        # self.expand_Y = np.zeros(self.prob.shape)
+        # print(np.max(Y)+1)
+        # self.expand_Y = np.eye(np.max(Y.astype(int))+1)[Y.astype(int)].reshape(self.prob.shape)
+        #
+        # print(self.expand_Y)
+        self.expand_Y = np.zeros(self.prob.shape).reshape(-1)
+        # print(self.expand_Y)
+        # self.expand_Y[range(self.expand_Y.shape[0]), Y.astype(int)] = 1
+        self.expand_Y[np.arange(self.prob.shape[0]) * self.prob.shape[1] + Y.astype(int).reshape(-1)] = 1
+        # print(self.expand_Y)
+        self.expand_Y = self.expand_Y.reshape(self.prob.shape)
+        # print(self.expand_Y)
+
+        l = -self.expand_Y.dot(np.transpose(self.prob))
+        # print(l)
+        forward_output = l.trace()/X_prime.shape[0]
+
         return forward_output
 
     def backward(self, X, Y):
@@ -219,7 +244,7 @@ class softmax_cross_entropy:
             - Y: A numpy array of shape N_by_1 which has true labels for the N training samples in the minibatch.
 
             Operation:
-            - You need to compute the gradient of the softmanx cross entropy loss. 
+            - You need to compute the gradient of the softmanx cross entropy loss.
             - Make use of self.prob and self.expand_Y computed in the forward pass to avoid duplicate computation.
             - Please use np.XX to call a numpy function XX if necessary.
             - You are encouraged to use matrix/element-wise operations to avoid using FOR loop.
@@ -231,7 +256,7 @@ class softmax_cross_entropy:
         ################################################################################
         # TODO: Implement the backward pass. Store the result in backward_output       #
         ################################################################################
-        
+        backward_output = (np.exp(self.prob)-self.expand_Y)/self.prob.shape[0]
         return backward_output
 
 
