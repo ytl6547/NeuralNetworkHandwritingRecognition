@@ -29,12 +29,16 @@ ground_hat_X = np.array([[ 0.42525407, -0.2120611 ],
 if (hat_X.shape[0] != 5) or (hat_X.shape[1] != 2):
     print('Wrong output dimension of linear.forward')
 else:
-    max_relative_diff = np.amax(np.abs(ground_hat_X - hat_X) / (ground_hat_X + 1e-8))
+    max_relative_diff = np.amax(np.abs((ground_hat_X - hat_X) / (ground_hat_X + 1e-8)))
     print('max_diff_output: ' + str(max_relative_diff))
-    if max_relative_diff >= 1e-7:
+    if max_relative_diff >= 1e-6:
         print('linear.forward might be wrong')
     else:
         print('linear.forward should be correct')
+    # if np.allclose(ground_hat_X, hat_X, atol=1e-08, rtol=1e-08):
+    #   print('linear.forward should be correct')
+    # else:
+    #   print('linear.forward might be wrong')
 print('##########################')
 
 
@@ -57,14 +61,13 @@ ground_grad_b = np.array([[-4.55094716, -2.51399667]])
 if (grad_X.shape[0] != 5) or (grad_X.shape[1] != 3):
     print('Wrong output dimension of linear.backward')
 else:
-    max_relative_diff_X = np.amax(np.abs(ground_grad_X - grad_X) / (ground_grad_X + 1e-8))
+    max_relative_diff_X = np.amax(np.abs((ground_grad_X - grad_X) / (ground_grad_X + 1e-8)))
     print('max_diff_grad_X: ' + str(max_relative_diff_X))
-    max_relative_diff_W = np.amax(np.abs(ground_grad_W - check_linear.gradient['W']) / (ground_grad_W + 1e-8))
+    max_relative_diff_W = np.amax(np.abs((ground_grad_W - check_linear.gradient['W']) / (ground_grad_W + 1e-8)))
     print('max_diff_grad_W: ' + str(max_relative_diff_W))
-    max_relative_diff_b = np.amax(np.abs(ground_grad_b - check_linear.gradient['b']) / (ground_grad_b + 1e-8))
+    max_relative_diff_b = np.amax(np.abs((ground_grad_b - check_linear.gradient['b']) / (ground_grad_b + 1e-8)))
     print('max_diff_grad_b: ' + str(max_relative_diff_b))
-
-    if (max_relative_diff_X >= 1e-7) or (max_relative_diff_W >= 1e-7) or (max_relative_diff_b >= 1e-7):
+    if (max_relative_diff_X >= 1e-6) or (max_relative_diff_W >= 1e-6) or (max_relative_diff_b >= 1e-6):
         print('linear.backward might be wrong')
     else:
         print('linear.backward should be correct')
@@ -82,9 +85,9 @@ ground_hat_X = np.array([[ 0.,          0.99734545,  0.2829785 ],
 if (hat_X.shape[0] != 5) or (hat_X.shape[1] != 3):
     print('Wrong output dimension of relu.forward')
 else:
-    max_relative_diff = np.amax(np.abs(ground_hat_X - hat_X) / (ground_hat_X + 1e-8))
+    max_relative_diff = np.amax(np.abs((ground_hat_X - hat_X) / (ground_hat_X + 1e-8)))
     print('max_diff_output: ' + str(max_relative_diff))
-    if max_relative_diff >= 1e-7:
+    if max_relative_diff >= 1e-6:
         print('relu.forward might be wrong')
     else:
         print('relu.forward should be correct')
@@ -102,10 +105,10 @@ ground_grad_X = np.array([[-0.,          0.92746243, -0.17363568],
 if (grad_X.shape[0] != 5) or (grad_X.shape[1] != 3):
     print('Wrong output dimension of relu.backward')
 else:
-    max_relative_diff_X = np.amax(np.abs(ground_grad_X - grad_X) / (ground_grad_X + 1e-8))
+    max_relative_diff_X = np.amax(np.abs((ground_grad_X - grad_X) / (ground_grad_X + 1e-8)))
     print('max_diff_grad_X: ' + str(max_relative_diff_X))
 
-    if (max_relative_diff_X >= 1e-7):
+    if (max_relative_diff_X >= 1e-6):
         print('relu.backward might be wrong')
     else:
         print('relu.backward should be correct')
@@ -120,14 +123,16 @@ inp_x = np.array([[-0.43435128,  2.20593008,  2.18678609],
        [-1.4286807 , -0.14006872, -0.8617549 ]])
 
 Y = np.array([2,0,1,2,0])
+Y = np.reshape(Y, (5,1))
+
 ground_loss = 1.34731143168356
 softmax_layer = dnn_misc.softmax_cross_entropy()
 loss_hat = softmax_layer.forward(inp_x, Y)
 if loss_hat.shape != ():
-    print('Wrong output dimension of softmax_cross_entroy.forward')
+    print('Wrong output dimension of softmax_cross_entropy.forward')
 else:
-    if abs(loss_hat - ground_loss) >= 1e-7:
-        print('softmax_cross_entroy.forward might be wrong')
+    if abs(loss_hat - ground_loss) >= 1e-6:
+        print('softmax_cross_entropy.forward might be wrong')
     else:
         print("softmax_cross_entropy.forward should be correct")
 print('##########################')
@@ -153,7 +158,7 @@ grad_hat = softmax_layer.backward(inp_x, Y)
 if grad_hat.shape != grad_ground.shape:
     print('Wrong output dimension of softmax_cross_entroy.backward')
 else:
-    max_relative_diff = np.amax( np.abs( grad_ground - grad_hat ) / (grad_ground + 1e-9))
+    max_relative_diff = np.amax(np.abs((grad_ground - grad_hat)/(grad_ground + 1e-9)))
     if (max_relative_diff >= 1e-6):
         print('softmax_cross_entroy.backward might be wrong')
     else:
