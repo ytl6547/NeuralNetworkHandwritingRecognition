@@ -3,8 +3,8 @@ Neural network is trying to move the data that belong to the same cluster closer
 
 
 2.What effect does momentum have on the convergence of training and why? 
-Momentum improves the predict accuracy but bring more oscillation in the training process. 
+Momentum speeds up the convergence of training. Because gradient descent with momentum tends to keep traveling in the same direction, preventing oscillations, and decreases the loss more rapidly.
 
 
 3.What would have been a good time(epoch) to stop the training and why?
-Epoch 8 is a good time to stop for this assignment. After epoch 8, both the accuracy and the loss do not have significant improvement or are not getting better at all. 
+Epoch 8 is a good time to stop for this assignment. After epoch 8, both the accuracy and the loss do not have significant improvement or are not getting better at all.
